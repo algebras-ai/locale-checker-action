@@ -23,7 +23,7 @@ runs:
       shell: bash
       run: |
         python -m pip install --upgrade pip
-        pip install algebras-cli
+        pip install git+https://github.com/algebras-ai/algebras-cli.git
     
     - name: Configure Algebras CLI (if file pattern provided)
       shell: bash
