@@ -42,7 +42,7 @@ runs:
       shell: bash
       run: |
         STATUS_CODE=0
-        algebras status || STATUS_CODE=$?
+        algebras ci --verbose || STATUS_CODE=$?
         
         if [ $STATUS_CODE -ne 0 ]; then
           echo "::error::Translation status check failed! Some translations are missing or outdated."
