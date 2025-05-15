@@ -19,8 +19,6 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - '**.tsx'
-      - '**.ts'
       - '**/locale/**'
       - '**/translations/**'
       - '**/i18n/**'
@@ -31,32 +29,47 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Check translation status
-        uses: algebras-ai/algebras-status-action@v1
+    - name: Algebras Translation Status
+      uses: algebras-ai/locale-checker-action@main
         # Optional: specify a file pattern
         # with:
         #   file_pattern: "src/locale/**/*.json"
 ```
 
-## Inputs
+## Example Outputs
 
-| Input | Description | Required | Default |
-|-------|-------------|----------|---------|
-| `file_pattern` | Optional file pattern for localization files | No | "" |
+### Success Case
+```
+Loaded configuration: /path/to/.algebras.config
+Available languages: en, fr, es, de
+Source language: en
+Running CI checks...
+Scanning for translation files...
+Found files by language: {'en': ['src/locales/en.json'], 'fr': ['src/locales/fr.json'], 'es': ['src/locales/es.json'], 'de': ['src/locales/de.json']}
 
-## How It Works
+Processing languages: fr, es, de
+All translation keys are up-to-date! ✅
+::notice::Translation status check passed! All translations are up-to-date.
+```
 
-The action:
+### Failure Case
+```
+Loaded configuration: /path/to/.algebras.config
+Available languages: en, fr, es, ru
+Source language: en
+Running CI checks...
 
-1. Sets up Python on the runner
-2. Installs the Algebras CLI
-3. Runs `algebras status` to check translation health
-4. Fails if any translations are missing or outdated
+CI Check: Found issues with translations:
 
-## About Algebras AI
+Language 'ru': Missing keys:
+  - Features.feature6_description
+  - Features.feature6_title
+  - TodoForm.some_new_key_to_test
 
-[Algebras AI](https://algebras.ai) provides powerful AI-driven localization tools for applications. This action focuses on health checking your translations, not on generating translations.
+Language 'ru': Outdated keys:
+  - Features.feature1_title (Source updated: 2024-10-08, Target: 2024-10-03)
+  - Hero.title (Source updated: 2024-10-07, Target: 2024-10-03)
 
-## License
-
-This project is licensed under the MIT License. 
+::error::Translation status check failed! Some translations are missing or outdated.
+Error: Process completed with exit code 1.
+```
