@@ -1,0 +1,52 @@
+name: 'Algebras Translation Status'
+description: 'Check translation status in your i18n-enabled NextJS project with one click'
+author: 'algebras-ai'
+branding:
+  icon: 'globe'
+  color: 'blue'
+
+inputs:
+  file_pattern:
+    description: 'Optional file pattern for localization files'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install Algebras CLI
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install algebras-cli
+    
+    - name: Configure Algebras CLI (if file pattern provided)
+      shell: bash
+      if: inputs.file_pattern != ''
+      run: |
+        algebras configure --path-rules "${{ inputs.file_pattern }}"
+    
+    - name: Initialize Algebras project (if needed)
+      shell: bash
+      run: |
+        if [ ! -f .algebras.config ]; then
+          algebras init
+        fi
+    
+    - name: Check translation status
+      shell: bash
+      run: |
+        STATUS_CODE=0
+        algebras status || STATUS_CODE=$?
+        
+        if [ $STATUS_CODE -ne 0 ]; then
+          echo "::error::Translation status check failed! Some translations are missing or outdated."
+          exit 1
+        else
+          echo "::notice::Translation status check passed! All translations are up-to-date."
+        fi 
