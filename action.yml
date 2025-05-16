@@ -10,6 +10,10 @@ inputs:
     description: 'Optional file pattern for localization files'
     required: false
     default: ''
+  only-missing:
+    description: 'Only report missing keys if provided'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -42,7 +46,11 @@ runs:
       shell: bash
       run: |
         STATUS_CODE=0
-        algebras ci --verbose || STATUS_CODE=$?
+        if [ "${{ inputs.only-missing }}" == "true" ]; then
+          algebras ci --verbose --only-missing || STATUS_CODE=$?
+        else
+          algebras ci --verbose || STATUS_CODE=$?
+        fi
         
         if [ $STATUS_CODE -ne 0 ]; then
           echo "::error::Translation status check failed! Some translations are missing or outdated."
