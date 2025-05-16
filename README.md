@@ -34,7 +34,15 @@ jobs:
         # Optional: specify a file pattern
         # with:
         #   file_pattern: "src/locale/**/*.json"
-```
+        #   only-missing: true
+        # Optional: only report missing keys (ignore outdated ones)
+        # with:
+        #   only-missing: true
+
+## Inputs
+
+- `file_pattern` (optional): Specify a glob pattern for your localization files (e.g., `src/locale/**/*.json`).
+- `only-missing` (optional): If set to `true`, the action will only report missing translation keys and ignore outdated keys. Default is `false`.
 
 ## Example Outputs
 
